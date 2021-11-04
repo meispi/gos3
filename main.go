@@ -5,9 +5,19 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"os/user"
 	"strings"
 	"sync"
+	"path/filepath"
 )
+
+func getPathDir() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	return filepath.Join(usr.HomeDir, ".config"), nil
+}
 
 func main() {
 	word := os.Args[1]
@@ -24,9 +34,15 @@ func main() {
 	ds := []string{".","-",""} 
 
 	// common_bucket_prefixes.txt contains a list of most common prefixes in a bucket name (of course😅), thanks to @nahamsec
-	file, err := os.Open("common_bucket_prefixes.txt")
+	path, err := getPathDir()
 	if err != nil {
-		fmt.Println("File not found!")
+		fmt.Println(".config directory not found in the root directory!")
+		return
+	} 
+	file, err := os.Open(path+"/common_bucket_prefixes.txt")
+	if err != nil {
+		fmt.Println(".config is present but common_bucket_prefixes.txt file not found!")
+		return
 	} 
 	list, err := ioutil.ReadAll(file)
 	prefix_list := strings.Split(strings.ReplaceAll(string(list),"\r\n","\n"),"\n")
@@ -75,13 +91,14 @@ func main() {
 		res = append(res, str)
 	}
 
+	fmt.Println(len(res))
 	// colorRed := "\033[31m"
     // colorGreen := "\033[32m"
 
 	jobs := make(chan string)
 	var wg sync.WaitGroup
 
-	for k := 0; k < 50; k++ {
+	for k := 0; k < 30; k++ {
 		wg.Add(1)
 
 		go func() {
@@ -94,7 +111,6 @@ func main() {
 				}
 				defer resp.Body.Close()
 				if resp.StatusCode == 200 {
-					
 					fmt.Printf("http://%s.s3.amazonaws.com: %d\n", prefix, resp.StatusCode)
 				} else if resp.StatusCode < 404 {
 					fmt.Printf("http://%s.s3.amazonaws.com: %d\n", prefix, resp.StatusCode)
