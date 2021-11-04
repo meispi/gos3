@@ -75,8 +75,8 @@ func main() {
 		res = append(res, str)
 	}
 
-	colorRed := "\033[31m"
-    colorGreen := "\033[32m"
+	// colorRed := "\033[31m"
+    // colorGreen := "\033[32m"
 
 	jobs := make(chan string)
 	var wg sync.WaitGroup
@@ -95,9 +95,9 @@ func main() {
 				defer resp.Body.Close()
 				if resp.StatusCode == 200 {
 					
-					fmt.Printf("%shttp://%s.s3.amazonaws.com: %d\n", colorGreen, prefix, resp.StatusCode)
+					fmt.Printf("http://%s.s3.amazonaws.com: %d\n", prefix, resp.StatusCode)
 				} else if resp.StatusCode < 404 {
-					fmt.Printf("%shttp://%s.s3.amazonaws.com: %d\n", colorRed, prefix, resp.StatusCode)
+					fmt.Printf("http://%s.s3.amazonaws.com: %d\n", prefix, resp.StatusCode)
 				}
 			}
 		}()
