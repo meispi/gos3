@@ -5,7 +5,7 @@ A golang version of the tool [lazys3](https://github.com/nahamsec/lazys3) by [@n
 ## Installation
 
 ```
-go install https://github.com/meispi/gos3@latest
+go install github.com/meispi/gos3@latest
 ```
 
 ## How to use
