@@ -82,7 +82,7 @@ func main() {
 	// removing duplicate permutations and all the words that have length > 63 (not allowed in bucket naming rules)
 	check := make(map[string]int)
 	for _, i := range perms {
-		if len(i) <= 63 {
+		if len(i) <= 63 && i[len(i)-1] != '.' && i[len(i)-1] != '-' && i[0] != '.' && i[0] != '-' {
 			check[i] = 1
 		}
 	}
@@ -105,6 +105,7 @@ func main() {
 			defer wg.Done()
 
 			for prefix := range jobs {
+				// fmt.Println(prefix)
 				resp, err := http.Get("http://"+prefix+".s3.amazonaws.com")
 				if err != nil {
 					continue
